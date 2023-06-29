@@ -74,13 +74,11 @@ model Category {
 model User {
   id String @id @default(uuid())
 
-  username      String @unique
+  email String @unique
   passwordHash  String
   userAuthToken String @unique
-  
   firstName String?
   lastName String?
-  email String
   phone String?
   address Address?
   
