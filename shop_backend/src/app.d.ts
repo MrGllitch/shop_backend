@@ -8,8 +8,9 @@ declare global {
 				email: string;
 				isAdmin: boolean;
 			}
+			
 		}
-		// interface PageData {}
+		//interface PageData {}
 		// interface Platform {}
 	}
 }

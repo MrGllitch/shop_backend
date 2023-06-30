@@ -40,8 +40,12 @@
           font-family: Inter;
           font-style: normal;
           font-weight: 700;
+          
      }
 
+     nav a{
+          text-decoration: none;
+     }
 </style>
 
 {#if !$page.data.user}
@@ -51,10 +55,7 @@
      <Login form={form}></Login>
      </Modal>
 {:else}
-     <form method="post" action="?/logout">
-          <button type=submit>logout</button>
-     </form>
-     <h4 class="welcome">Hello {email}</h4>
+     <!-- <h4 class="welcome">Hello {email}</h4> -->
      {#if $page.data.user.isAdmin === true}
      <section>
      <nav>
