@@ -11,9 +11,9 @@ export const load = (async () => {
             state: true,
             region: true,
             price: true,
-            //width: true,
-            //height: true,
-            //depth: true,
+            width: true,
+            height: true,
+            depth: true,
             weight: true,
             visible: true,
         }

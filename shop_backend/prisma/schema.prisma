@@ -25,7 +25,6 @@ model Product {
   height Float
   depth Float
   weight Float
-  size Float?
   colors Color[]
   description String?
   

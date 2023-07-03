@@ -10,8 +10,12 @@
 	dialog {
 		max-width: 32em;
 		border-radius: 0.2em;
-		border: none;
+		border: 1px solid;
 		padding: 0;
+		background: rgba(0, 0, 0, 0.1);
+		border: white solid 1px;
+        border-radius: 15px;
+
 	}
 	dialog::backdrop {
 		background: rgba(0, 0, 0, 0.3);

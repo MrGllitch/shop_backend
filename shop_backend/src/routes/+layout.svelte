@@ -21,7 +21,7 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        background: #1C1C1C;
+        background: #2b2b2b;
         margin: 0;
         padding: 5px 15px;
     }

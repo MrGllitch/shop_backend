@@ -30,6 +30,7 @@ export let data:PageData
     }
 </style>
 <section class=table>
+{#if data.display_products.length > 0}
 <table>
   <tr>
     {#each Object.keys(data.display_products[0]) as key}
@@ -762,4 +763,8 @@ export let data:PageData
 
 
 </table>
+{:else}
+   No products found :C
+{/if}
+
 </section>

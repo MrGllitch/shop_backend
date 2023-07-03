@@ -6,14 +6,13 @@ export let form: ActionData
 </script>
 
 <style>
+
     form{
         display: flex;
         flex-direction: column;
         color:rgba(0, 0, 0, 0.1);
-        border: black solid 1px;
-        border-radius: 15px;
         align-items: center;
-        padding: 10px;
+        padding: 20px;
     }
     form p{
         color:black;
@@ -25,13 +24,19 @@ export let form: ActionData
     .error{
         color:red;
     }
-</style>
+    h2{
+        color:white;
+    }
+    label{
+        color:white;
+    }
 
+</style>
 <form method="post" action=?/login>
     <h2>Login</h2>
-    <p>user</p>
+    <label for="email">Email</label>
     <input type=email name="email" required>
-    <p>pass</p>
+    <label for="password">Password</label>
     <input type=password name="password" required>
     {#if form?.exist}
          <p class="error">User with that email already exists</p>
@@ -43,6 +48,5 @@ export let form: ActionData
     <p class="error">Bad login</p>
     {/if}
     <button type="submit">Login</button>
-         Dont have account yet?
-         <a href='/register'>register</a>
+         <label for="">Dont have account yet?<a href='/register'>register</a></label>
 </form>

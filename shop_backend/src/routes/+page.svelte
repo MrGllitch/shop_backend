@@ -13,9 +13,7 @@
 </script>
 
 <style>
-     .welcome{
-          color:#FFFFFF;
-     }
+
 
      nav{
           display:grid;
@@ -26,7 +24,7 @@
      }
      nav div{
      border-radius: 3.125rem;
-     background: #1C1C1C;
+     background: #2b2b2b;
      width: 18.75rem;
      height: 12.5rem;
      display:flex;
