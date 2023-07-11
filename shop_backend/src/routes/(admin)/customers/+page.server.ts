@@ -5,7 +5,7 @@ export const load = (async () => {
 	try {
 		const display_customers = await prisma.user.findMany({
 			select: {
-				id: false,
+				id: true,
 				email: true,
 				passwordHash: false,
 				userAuthToken: false,
@@ -27,9 +27,6 @@ export const load = (async () => {
 		});
 
 		const formatted_customers = display_customers.map((customer) => {
-			const { address, email, firstName, lastName, phone, isAdmin } = customer;
-			const { street, city, state, zip } = address ?? {};
-
 			const formattedCreatedAt = customer.createdAt.toLocaleDateString('cs-CZ', {
 				day: 'numeric',
 				month: 'long',
@@ -43,17 +40,18 @@ export const load = (async () => {
 			});
 
 			return {
-				email,
+				id: customer.id,
+				email: customer.email,
 				firstName: customer.firstName ?? '',
 				lastName: customer.lastName ?? '',
 				phone: customer.phone ?? '',
-				street: street ?? '',
-				city: city ?? '',
-				state: state ?? '',
-				zip: zip ?? '',
+				street: customer.address?.street ?? '',
+				city: customer.address?.city ?? '',
+				state: customer.address?.state ?? '',
+				zip: customer.address?.zip ?? '',
 				createdAt: formattedCreatedAt,
 				updatedAt: formattedUpdatedAt,
-				isAdmin
+				isAdmin: customer.isAdmin
 			};
 		});
 
