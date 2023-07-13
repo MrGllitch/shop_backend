@@ -27,7 +27,8 @@ model Product {
   weight Float
   colors Color[]
   description String?
-  
+  note String?
+    
   categories Category[]
 
   createdAt DateTime @default(now())

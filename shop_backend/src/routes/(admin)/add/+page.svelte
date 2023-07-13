@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let data: PageData;
@@ -6,6 +7,8 @@
 	let colors = [];
 	let files: any = [];
 	let hex: string;
+	let currentDate;
+
 	function onChange(event: any) {
 		const fileList = event.target.files;
 		files = [...files, ...Array.from(fileList)];
@@ -13,10 +16,15 @@
 	function removeFile(index: number) {
 		files = files.filter((_: any, i: any) => i !== index);
 	}
+
+	onMount(() => {
+		const now = new Date();
+		currentDate = now.toISOString();
+	});
 </script>
 
 <section class="product">
-	<form class="product_form">
+	<form class="product_form" method="post" action="?/addProduct">
 		<!-- 1. -->
 
 		<div class="name">
@@ -105,7 +113,7 @@
 
 		<div class="date">
 			<label class="date" for="date">Publish selected:</label>
-			<input class="date" type="date" id="date" name="date" />
+			<input class="date" type="datetime-local" id="date" name="date" bind:this={currentDate} />
 		</div>
 
 		<div class="note">
@@ -177,7 +185,7 @@
 
 	input[type='text'],
 	input[type='number'],
-	input[type='date'] {
+	input[type='datetime-local'] {
 		width: 50%;
 		padding: 8px;
 		border-radius: 3px;
