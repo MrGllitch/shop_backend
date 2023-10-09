@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 	export let data: PageData;
 </script>
@@ -16,7 +17,9 @@
 					{#each Object.values(product) as value}
 						<td><span>{value}</span></td>
 					{/each}
-					<td><span><button>Edit</button></span></td>
+					<td
+						><span><button on:click={() => goto(`/products/${product.id}`)}>Edit</button></span></td
+					>
 				</tr>
 			{/each}
 		</table>

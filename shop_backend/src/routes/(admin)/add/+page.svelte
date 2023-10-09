@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { SvelteComponentTyped, onMount } from 'svelte';
 	import type { PageData } from './$types';
 	import ColorPicker from 'svelte-awesome-color-picker';
 	export let data: PageData;
-	let categories = [];
-	let colors = [];
+	let selectedColors: number[] = [];
 	let files: any = [];
 	let hex: string;
 	let currentDate;
+	let selectedCategories: number[] = [];
+	let formData: { categories: string[] } = { categories: [] };
 
 	function onChange(event: any) {
 		const fileList = event.target.files;
@@ -16,15 +17,63 @@
 	function removeFile(index: number) {
 		files = files.filter((_: any, i: any) => i !== index);
 	}
+	async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
+		// Collect all form data
+		const formData = new FormData(event.currentTarget);
+		// formData.append('name', event.target['name'].value);
+		// formData.append('price', event.target['price'].value);
+		// formData.append('owner', event.target['owner'].value);
+		// formData.append('bprice', event.target['bprice'].value);
 
-	onMount(() => {
-		const now = new Date();
-		currentDate = now.toISOString();
-	});
+		// Append selected categories to the formData
+		formData.append('categories', JSON.stringify(selectedCategories));
+
+		// Append selected colors to the formData
+		formData.append('colors', JSON.stringify(selectedColors));
+
+		// formData.append('locality', event.target['locality'].value);
+		// formData.append('region', event.target['region'].value);
+		// formData.append('state', event.target['state'].value);
+
+		// formData.append('width', event.target['width'].value);
+		// formData.append('height', event.target['height'].value);
+		// formData.append('depth', event.target['depth'].value);
+		// formData.append('weight', event.target['weight'].value);
+
+		// formData.append('description', event.target['description'].value);
+
+		// Append selected files to the formData
+		for (const file of files) {
+			formData.append('images', file);
+		}
+
+		// Append date and note
+		// formData.append('date', event.target['date'].value);
+		// formData.append('note', event.target['note'].value);
+
+		// You can now send formData to your server using fetch or another method
+		console.log('toto posílám' + formData);
+		try {
+			const response = await fetch(event.currentTarget.action, {
+				method: 'POST',
+				body: formData
+			});
+
+			if (response.ok) {
+				// Handle successful response
+				console.log('Product added successfully');
+			} else {
+				// Handle error response
+				console.error('Failed to add product');
+			}
+		} catch (error) {
+			console.error('Error:', error);
+		}
+	}
 </script>
 
 <section class="product">
-	<form class="product_form" method="post" action="?/addProduct">
+	<form class="product_form" on:submit|preventDefault={handleSubmit} action="?/addProduct">
 		<!-- 1. -->
 
 		<div class="name">
@@ -40,6 +89,8 @@
 		<div class="owner">
 			<label for="owner">Owner</label>
 			<input type="text" id="owner" name="owner" />
+			<label for="bprice">Buy Price</label>
+			<input type="text" id="bprice" name="bprice" />
 		</div>
 
 		<!-- 2. -->
@@ -47,13 +98,24 @@
 			{#each data.categories as category}
 				<div class="category_item">
 					<label for={category.name}>{category.name}</label>
-					<input id={category.name} type="checkbox" />
+					<input
+						id={category.name}
+						bind:group={selectedCategories}
+						type="checkbox"
+						value={category.id}
+					/>
 				</div>
 			{/each}
 		</div>
 		<div class="colors">
 			{#each data.colors as color}
-				<input type="checkbox" style="background-color: {color.color}" />
+				<input
+					id="{color.name};"
+					type="checkbox"
+					style="background-color: {color.color}"
+					value={color.id}
+					bind:group={selectedColors}
+				/>
 			{/each}
 		</div>
 

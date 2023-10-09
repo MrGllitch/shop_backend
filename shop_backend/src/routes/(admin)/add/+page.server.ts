@@ -2,6 +2,7 @@ import type { Action } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import DateTime from 'luxon';
 import prisma from '$lib/prisma';
+import type { Prisma } from '@prisma/client';
 
 export const load: PageServerLoad = async (route) => {
 	const categories = await prisma.category.findMany({});
@@ -41,37 +42,47 @@ const addProduct: Action = async ({ request }) => {
 	const data = await request.formData();
 	console.log(data);
 	const name = data.get('name');
+	const owner_name = data.get('owner');
 	const locality = data.get('locality');
 	const state = data.get('state');
 	const region = data.get('region');
 	const price = Number(data.get('price'));
+	const bPrice = Number(data.get('bprice'));
 	const width = Number(data.get('width'));
 	const height = Number(data.get('height'));
 	const depth = Number(data.get('depth'));
 	const weight = Number(data.get('weight'));
 	const description = data.get('description');
 	const note = data.get('note');
-	const colors = data.get('colors');
-	const categories = data.get('categories');
-	//const publishedAt = data.get('date') ?? '';
-	//const date = new Date(publishedAt).toISOString();
+	// const colors: number[] = (data.get('colors') || []) as number[];
+	// const categories: number[] = (data.get('categories') || []) as number[];
 
-	console.log(
-		name,
-		locality,
-		state,
-		region,
-		price,
-		width,
-		height,
-		depth,
-		weight,
-		description,
-		note,
-		colors,
-		categories
-		//	publishedAt
-	);
+	const colorsString = data.get('colors');
+	const colors: number[] | null =
+		typeof colorsString === 'string' ? (JSON.parse(colorsString) as number[]) : null;
+
+	const categoriesString = data.get('colors');
+	const categories: number[] | null =
+		typeof categoriesString === 'string' ? (JSON.parse(categoriesString) as number[]) : null;
+
+	console.log(typeof colors, colors, categories);
+	const date = data.get('date') ? new Date(data.get('date') as string).toISOString() : '';
+	// console.log(
+	// 	name,
+	// 	locality,
+	// 	state,
+	// 	region,
+	// 	price,
+	// 	width,
+	// 	height,
+	// 	depth,
+	// 	weight,
+	// 	description,
+	// 	note,
+	// 	colors,
+	// 	categories
+	// 	//	publishedAt
+	// );
 
 	if (
 		typeof name === 'string' &&
@@ -79,39 +90,103 @@ const addProduct: Action = async ({ request }) => {
 		typeof state === 'string' &&
 		typeof region === 'string' &&
 		typeof price === 'number' &&
+		typeof bPrice === 'number' &&
 		typeof width === 'number' &&
 		typeof height === 'number' &&
 		typeof depth === 'number' &&
 		typeof weight === 'number' &&
 		typeof description === 'string' &&
-		typeof note === 'string' //&&
+		typeof note === 'string' &&
+		typeof owner_name === 'string' &&
+		colors !== null &&
+		colors !== undefined &&
+		categories !== null &&
+		categories !== undefined &&
+		//typeof colors === 'string' &&
+		//typeof categories === 'string' &&
 		//Array.isArray(colors) &&
 		//Array.isArray(categories) &&
-		//	typeof publishedAt === 'string'
+		typeof date === 'string'
 	) {
-		const newProduct = await prisma.product.create({
-			data: {
-				name,
-				locality,
-				state,
-				region,
-				price,
-				width,
-				height,
-				depth,
-				weight,
-				description
-				//colors: {
-				//	create: colors.map((color) => ({ color: color.hex, name: color.name }))
-				//},
-				//categories: {
-				//	create: categories.map((category) => ({ name: category.name }))
-				//},
-				//publishedAt
-			}
-		});
+		console.log('první if prošel');
 
-		console.log('Product added');
+		if (typeof owner_name === 'string') {
+			//finding the owner
+			const owner_id = await prisma.owner.findFirst({
+				where: { name: owner_name },
+				select: {
+					id: true
+				}
+			});
+			//if the owner is not found, create him
+			if (owner_id) {
+				const newProduct = await prisma.product.create({
+					data: {
+						name,
+						locality,
+						state,
+						region,
+						bPrice,
+						price,
+						width,
+						height,
+						depth,
+						weight,
+						description,
+						owner: {
+							connect: {
+								id: owner_id.id
+							}
+						},
+						colors: {
+							connect: colors.map((color) => ({ id: color }))
+						},
+						categories: {
+							connect: categories.map((category) => ({ id: category }))
+						},
+						publishedAt: date
+					}
+				});
+
+				console.log('Product added');
+			}
+
+			//if owner exists then use that we found
+			else {
+				const newProduct = await prisma.product.create({
+					data: {
+						name,
+						locality,
+						state,
+						region,
+						bPrice,
+						price,
+						width,
+						height,
+						depth,
+						weight,
+						description,
+						owner: {
+							create: {
+								name: owner_name
+							}
+						},
+						colors: {
+							connect: colors.map((color) => ({ id: color }))
+						},
+						categories: {
+							connect: categories.map((category) => ({ id: category }))
+						},
+						publishedAt: date
+					}
+				});
+
+				console.log('Product added');
+			}
+		}
+	} else {
+		console.log('prvni if neprošel');
+		console.log(categories);
 	}
 };
 
